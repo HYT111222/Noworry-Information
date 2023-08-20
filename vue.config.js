@@ -1,4 +1,5 @@
 module.exports = {
+  lintOnSave: false,//关闭格式校验
   publicPath: '/',
   assetsDir: "./static",
   indexPath: "./templates/index.html",

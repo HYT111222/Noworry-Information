@@ -1,6 +1,10 @@
 <template>
-  <div class="header">
-    <nav>
+  
+  <router-view />
+
+  <!-- <div class="header"> -->
+    <!--nav：导航超链接，常用于导航菜单索引等-->
+    <!-- <nav>
       <div>
         <router-link to="/" class="website-title">首页</router-link>
       </div>
@@ -19,15 +23,16 @@
     <router-view />
   </div>
 
-  <div class="footer">
-    <hr />
+  <div class="footer"> -->
+    <!--水平分割线-->
+    <!-- <hr />
     <div class="copyright">© 2023 Noworry, all rights reserved</div>
     <div class="list-menu">
       <div>Cookie Notice</div>
       <div>Privacy Notice</div>
       <div>Contact</div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script setup lang="ts">
@@ -45,7 +50,9 @@ body {
 
 #app {
   font-family: Segoe UI, Segoe UI Light;
+  /* -webkit为前缀，是chrome和safari的私有属性，-font-smoothing表示让字体显示得平滑清晰*/
   -webkit-font-smoothing: antialiased;
+  /**-moz是Firefox的私有属性，osx针对ios系统 */
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   background-color: #ffffff;
@@ -55,8 +62,11 @@ body {
   width: 100%;
   background-color: #ffffff;
   display: flex;
+  /**在每行上均匀分配弹性元素。相邻元素间距离相同。
+  每行第一个元素到行首的距离和每行最后一个元素到行尾的距离将会是相邻元素之间距离的一半。 */
   justify-content: space-around;
 }
+
 
 @media screen and (min-width: 650px) {
   nav {
