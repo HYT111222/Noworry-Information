@@ -41,11 +41,11 @@
     display: grid;
     grid-column-gap: 60px;
     grid-template-columns: auto auto;
-    grid-row-gap:50px;
+    grid-row-gap:40px;
   }
   .card-container {
-    width: 200px;
-    height: 200px;
+    width: 180px;
+    height: 180px;
     padding: 10px;
     border-radius: 10px;
   } 
@@ -78,7 +78,7 @@
   .container {
    background-color: #ffffff;
    height: 85%;
-   width: 80%;
+   width: 85%;
    border-radius: 0.5%;
   }
   .inner-center {
