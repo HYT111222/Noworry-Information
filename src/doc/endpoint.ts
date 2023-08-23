@@ -9,7 +9,11 @@ const ROOT_PATH = "/api";
 const CONTACT_ROUTE = ROOT_PATH + "/contact"
 const SEND_EMAIL_TO_HOST = CONTACT_ROUTE + "/sendemail"
 
+//登录注册相关路由
+const LOGIN_URL = ROOT_PATH + '/sys-user/login'
+
 export default {
     CONTACT_ROUTE,
-    SEND_EMAIL_TO_HOST
+    SEND_EMAIL_TO_HOST,
+    LOGIN_URL
 }

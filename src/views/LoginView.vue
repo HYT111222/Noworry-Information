@@ -3,7 +3,7 @@
       <div class="container inner-center self-center">
          <!-- 添加动画效果的过渡元素 -->
          <transition name="fade-slide">
-         <div class="card inner-center self-center card-radius" v-if="showLoginContainer" key="login-container" @click="animateLoginContainer">
+         <div class="card inner-center self-center card-radius" v-if="showLoginContainer" @click="animateLoginContainer">
             <div class="login-container inner-center" >
                <img src="@/assets/icon\home/164-指纹.png" class="login-img">
                <div class="login-button">
@@ -13,11 +13,30 @@
             </div>
          </transition>
          <transition name="fade-in-slide">
-            <div class="card inner-center self-center card-radius new-login" v-if="showLoginContainerInner" key="new-login">
-               <div class="header">登录</div>
-                 <p class="lable">账户：<input required type="text" v-model="loginInfo.name" placeholder="用户名" class="input-item"></p>
-                  <p class="lable">密码：<input required type="password" v-model="loginInfo.password" placeholder="密码" class="input-item"></p>
-                  <div><div class="btn-enter" @click="login">确定<img src="@/assets/icon\home/登录.png" class="login-icon"></div></div>
+            <div class="card inner-center self-center card-radius new-login" v-if="showLoginContainerInner" key ="login">
+               <div class="header">Login</div>
+                 <p class="lable">账号：<input required type="text" autocomplete="on" v-model="loginInfo.name" placeholder="邮箱/手机号，必填" class="input-item" ></p>
+                 <p class="error">{{ login_isError ? '请输入正确的邮箱或手机号' : '' }}</p>
+                  <p class="lable">密码：<input required type="password" v-model="loginInfo.password"  placeholder="必须包含数字和英文，必填" class="input-item"></p>
+                  <p class="error">{{ login_isError_psw ? '长度6~30,必须包含数字和英文字母，可以包含特殊字符' : '' }}</p>
+                  <div>
+                    <div class="btn-register" @click="animateRegisterContainer">没有账号？去注册</div>
+                    <div class="btn-enter" @click="login">确定<img src="@/assets/icon\home/登录.png" class="login-icon"></div>
+                  </div>
+            </div>
+          <div class="card inner-center self-center card-radius new-login" v-else-if = "showRegisterContainer" key = "register">
+            <div class="header">Register</div>
+              <div style="align-items: flex-end;display: flex;flex-direction: column;">
+                 <p class="lable">名称：<input required type="text" v-model="registerInfo.name" placeholder="邮箱/手机号" class="input-item" ></p>
+                  <p class="lable">密码：<input required type="password" v-model="registerInfo.password" placeholder="必须包含数字和英文" class="input-item"></p>
+                  <p class="lable">确认密码：<input required type="password" v-model="registerInfo.confirmPassword" placeholder="必须包含数字和英文" class="input-item"></p>
+                  <p class="lable">邮箱：<input type="email" title="邮箱格式不正确" required pattern="/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/$" v-model="registerInfo.email" placeholder="请输入邮箱" class="input-item"></p>
+                  <p class="lable">手机号：<input  type="text"  v-model="registerInfo.phone" placeholder="请输入手机号" class="input-item"></p>
+              </div>
+              <div>
+                <div class="btn-register" @click="animateLoginContainer">已有账号？去登录</div>
+                <div class="btn-enter" @click="register">注册<img src="@/assets/icon\home/登录.png" class="login-icon"></div>
+              </div>
             </div>
         </transition>
          </div>
@@ -25,31 +44,112 @@
 </template>
 
 <script setup lang="ts">
+import endpoint from "@/doc/endpoint";
+import { LoginReq } from "@/entity/request/loginReq"
 import router from '@/router';
-import { ref } from 'vue';
+import request from '@/router/interceptors'
+import { computed, ref } from 'vue';
 import {reactive } from "vue";
+
 
 const loginInfo = reactive({
   name: "",
   password:""
 });
+const registerInfo = reactive({
+  name:"",
+  password:"",
+  confirmPassword:"",
+  email:"",
+  phone:""
+})
 const showLoginContainer = ref(true);
 const showLoginContainerInner = ref(false);
+const showRegisterContainer = ref(false);
+//表单校验
+const login_isError = computed(() =>{//false:校验通过
+  return loginInfo.name !== '' && !loginInfo.name.match(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/) && !loginInfo.name.match(/^1\d{10}$/)
+})
+const login_isError_psw = computed(() =>{
+  return loginInfo.password !== '' && !loginInfo.password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!#$%^&*_@()]{6,30}$/)
+})
 
+/**动画效果 */
 function animateLoginContainer() {
+  showRegisterContainer.value = false;
   showLoginContainer.value = false;
-  // 等待动画结束后切换到登录框
   setTimeout(() => {
    showLoginContainerInner.value = true;
   }, 500);
 }
-//登录：先校验输入再发送请求（不用element不太会校验）
+function animateRegisterContainer() {
+  showLoginContainerInner.value = false;
+  setTimeout(() => {
+    showRegisterContainer.value = true;
+  }, 500);
+}
+//登录：先校验输入再发送请求
 function login() {
-   router.push("/menu");
+  if (!login_isError.value && !login_isError_psw.value && loginInfo.name!= '' && loginInfo.password!=''){
+    request({
+    url: `${endpoint.LOGIN_URL}`,
+    method: "POST",
+    data: new LoginReq(loginInfo.password,loginInfo.name),
+  }).then(response => {
+    // 处理响应
+    alert(response)
+    console.log(response)
+    router.push("/menu");
+  })
+  .catch(error => {
+    // 处理错误
+    alert("连接异常")
+  });
+  }else {
+    alert("请正确填写信息")
+   
+   
+  }
+  
+}
+//注册
+function register() {
+
 }
 </script>
 
 <style>
+/* 动画效果的过渡———出 */
+.fade-slide-leave-active,
+.fade-in-slide-leave-active {
+  transition: opacity 0.5s, transform 0.5s;
+}
+.fade-slide-leave-to,
+.fade-in-slide-leave-to {
+  opacity: 0;
+  transform: translateX(-70%);
+}
+/* 动画效果的过渡———入 */
+.fade-in-slide-enter-from{
+opacity: 0;
+transform: translateX(70%);
+}
+
+.fade-in-slide-enter-active {
+transition: opacity 0.7s, transform 0.7s;
+}
+
+.fade-in-slide-enter-to{
+opacity: 1;
+transform: translateX(0);
+}
+.error {
+  color: #b93e3e;
+  font-size: 5px;
+  margin: 3px;
+  height: 16px;
+  text-align: justify;
+}
 /**当宽大于等于650px时 */
 @media screen and (min-width: 650px) {
   .home {
@@ -110,11 +210,12 @@ function login() {
    font-family: Montserrat;
    color: rgb(42, 26, 42);
    font-weight: 400;
-   margin-bottom: 10px;
+   margin: 0px;
   }
   .input-item {
+   margin: 0px;
    height: 30px;
-   width: 200px;
+   width: 260px;
    border-radius: 10px;
    border-color: rgb(52, 31, 50);
   }
@@ -130,33 +231,30 @@ function login() {
    background-color: rgb(178, 110, 177);
    float: right;
   }
+  .btn-enter:hover {
+    background-color:rgb(218, 159, 217);
+  }
+  .btn-register {
+    margin-top: 20px;
+    width: auto;
+    padding-left: 0px;
+    font-size: 10px;
+    display: flex;
+    color: #36293b;
+    align-items: center;
+    justify-content: center;
+    background:transparent;
+    float: left;
+  }
+  .btn-register:hover {
+    color:#9b52b9;
+  }
   .login-icon {
    width: 20px;
    height: 20px;
    margin-left: 2px;
   }
-   /* 动画效果的过渡———出 */
-  .fade-slide-leave-active {
-    transition: opacity 0.5s, transform 0.5s;
-  }
-  .fade-slide-leave-to {
-    opacity: 0;
-    transform: translateX(-100%);
-  }
-  /* 动画效果的过渡———入 */
-  .fade-in-slide-enter-from{
-   opacity: 0;
-   transform: translateX(100%);
-  }
 
-  .fade-in-slide-enter-active {
-   transition: opacity 0.7s, transform 0.7s;
-   }
-
-   .fade-in-slide-enter-to{
-   opacity: 1;
-   transform: translateX(0);
-   }
 }
 
 @media screen and (max-width: 650px) {
@@ -203,6 +301,7 @@ function login() {
    font-weight: 600;
    color: rgb(42, 26, 42);
   }
+
   /**登录框 */
   .new-login {
    padding: 18px;
@@ -214,17 +313,22 @@ function login() {
    color: rgb(42, 26, 42);
   }
   .lable {
-   font-size: 16px;
+   font-size: 14px;
    font-family: Montserrat;
    color: rgb(42, 26, 42);
    font-weight: 400;
-   margin-bottom: 6px;
+   margin-bottom: 0px;
+   margin-top: 0px;
   }
   .input-item {
-   height: 28px;
+   height: 26px;
    width: 180px;
+   margin-top: 0px;
    border-radius: 7px;
    border-color: rgb(52, 31, 50);
+  }
+  input::-webkit-input-placeholder{
+    font-size: 10px;
   }
   .btn-enter {
    margin-top: 8px;
@@ -238,32 +342,28 @@ function login() {
    background-color: rgb(178, 110, 177);
    float: right;
   }
+  .btn-enter:hover {
+    background-color:rgb(218, 159, 217);
+  }
+  .btn-register {
+    margin-top: 15px;
+    width: auto;
+    padding-left: 0px;
+    font-size: 5px;
+    display: flex;
+    color: #36293b;
+    align-items: center;
+    justify-content: center;
+    background:transparent;
+    float: left;
+  }
+  .btn-register:hover {
+    color:#9b52b9;
+  }
   .login-icon {
    width: 18px;
    height: 18px;
    margin-left: 2px;
   }
-   /* 动画效果的过渡———出 */
-  .fade-slide-leave-active {
-    transition: opacity 0.5s, transform 0.5s;
-  }
-  .fade-slide-leave-to {
-    opacity: 0;
-    transform: translateX(-100%);
-  }
-  /* 动画效果的过渡———入 */
-  .fade-in-slide-enter-from{
-   opacity: 0;
-   transform: translateX(100%);
-  }
-
-  .fade-in-slide-enter-active {
-   transition: opacity 0.7s, transform 0.7s;
-   }
-
-   .fade-in-slide-enter-to{
-   opacity: 1;
-   transform: translateX(0);
-   }
 }
 </style>

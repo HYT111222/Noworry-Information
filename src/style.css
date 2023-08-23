@@ -22,3 +22,9 @@ body,
     font-family: arial;
     /* border-radius: 10%; */
 }
+/*内部所有flex元素水平跟垂直都居中*/
+.center {
+    display: flex;
+    align-items: center;/*垂直*/
+    justify-content: center;
+}
