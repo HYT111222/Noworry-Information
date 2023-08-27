@@ -15,10 +15,12 @@
          <transition name="fade-in-slide">
             <div class="card inner-center self-center card-radius new-login" v-if="showLoginContainerInner" key ="login">
                <div class="header">Login</div>
+               <div style="align-items: flex-end;display: flex;flex-direction: column;">
                  <p class="lable">账号：<input required type="text" autocomplete="on" v-model="loginInfo.name" placeholder="邮箱/手机号，必填" class="input-item" ></p>
                  <p class="error">{{ login_isError ? '请输入正确的邮箱或手机号' : '' }}</p>
                   <p class="lable">密码：<input required type="password" v-model="loginInfo.password"  placeholder="必须包含数字和英文，必填" class="input-item"></p>
-                  <p class="error">{{ login_isError_psw ? '长度6~30,必须包含数字和英文字母，可以包含特殊字符' : '' }}</p>
+                  <p class="error">{{ login_isError_psw ? '长度6~30,必须包含数字和英文字母' : '' }}</p>
+                </div>
                   <div>
                     <div class="btn-register" @click="animateRegisterContainer">没有账号？去注册</div>
                     <div class="btn-enter" @click="login">确定<img src="@/assets/icon\home/登录.png" class="login-icon"></div>
@@ -27,11 +29,16 @@
           <div class="card inner-center self-center card-radius new-login" v-else-if = "showRegisterContainer" key = "register">
             <div class="header">Register</div>
               <div style="align-items: flex-end;display: flex;flex-direction: column;">
-                 <p class="lable">名称：<input required type="text" v-model="registerInfo.name" placeholder="邮箱/手机号" class="input-item" ></p>
-                  <p class="lable">密码：<input required type="password" v-model="registerInfo.password" placeholder="必须包含数字和英文" class="input-item"></p>
-                  <p class="lable">确认密码：<input required type="password" v-model="registerInfo.confirmPassword" placeholder="必须包含数字和英文" class="input-item"></p>
-                  <p class="lable">邮箱：<input type="email" title="邮箱格式不正确" required pattern="/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/$" v-model="registerInfo.email" placeholder="请输入邮箱" class="input-item"></p>
-                  <p class="lable">手机号：<input  type="text"  v-model="registerInfo.phone" placeholder="请输入手机号" class="input-item"></p>
+                 <p class="lable">姓名：<input required type="text" v-model="registerInfo.name" placeholder="管理员名称" class="input-item" ></p>
+                  <p class="error" >{{ register_isError_name ? '长度在1~3个字符' : '' }}</p>
+                  <p class="lable">密码：<input required type="password" v-model="registerInfo.password" placeholder="6~30位，必须包含数字和英文" class="input-item"></p>
+                   <p class="error">{{ register_isError_psw ? '长度6~30,必须包含数字和英文字母' : '' }}</p>
+                  <p class="lable">确认密码：<input required type="password" v-model="registerInfo.confirmPassword" placeholder="6~30位，必须包含数字和英文" class="input-item"></p>
+                   <p class="error">{{ register_isError_pswCom ? '与以上输入的密码不一致' : '' }}</p>
+                  <p class="lable">邮箱：<input type="email"  v-model="registerInfo.email" placeholder="请输入邮箱,可选" class="input-item"></p>
+                  <p class="error">{{ register_isError_email ? '请输入正确的邮箱' : '' }}</p>
+                  <p class="lable">手机号：<input  type="text"  v-model="registerInfo.phone" placeholder="请输入手机号,可选" class="input-item"></p>
+                  <p class="error">{{ register_isError_phone ? '请输入正确的手机号' : '' }}</p>
               </div>
               <div>
                 <div class="btn-register" @click="animateLoginContainer">已有账号？去登录</div>
@@ -46,6 +53,7 @@
 <script setup lang="ts">
 import endpoint from "@/doc/endpoint";
 import { LoginReq } from "@/entity/request/loginReq"
+import { RegisterReq } from "@/entity/request/RegisterReq"
 import router from '@/router';
 import request from '@/router/interceptors'
 import { computed, ref } from 'vue';
@@ -73,6 +81,21 @@ const login_isError = computed(() =>{//false:校验通过
 const login_isError_psw = computed(() =>{
   return loginInfo.password !== '' && !loginInfo.password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!#$%^&*_@()]{6,30}$/)
 })
+const register_isError_name = computed(() =>{
+  return registerInfo.name!== '' && registerInfo.name.length <1 || registerInfo.name.length>=30
+})
+const register_isError_email = computed(() => {
+  return registerInfo.email!== '' && !registerInfo.email.match(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/)
+})
+const register_isError_phone = computed(() => {
+  return registerInfo.phone !=='' && !registerInfo.phone.match(/^1\d{10}$/)
+})
+const register_isError_psw = computed(() =>{
+  return registerInfo.password !== '' && !registerInfo.password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!#$%^&*_@()]{6,30}$/)
+})
+const register_isError_pswCom = computed(() =>{
+  return registerInfo.confirmPassword !== '' && !registerInfo.confirmPassword.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!#$%^&*_@()]{6,30}$/)
+})
 
 /**动画效果 */
 function animateLoginContainer() {
@@ -91,30 +114,44 @@ function animateRegisterContainer() {
 //登录：先校验输入再发送请求
 function login() {
   if (!login_isError.value && !login_isError_psw.value && loginInfo.name!= '' && loginInfo.password!=''){
+    let loginData;
+    if (loginInfo.name.match(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/)) {//邮箱登录
+      loginData = new LoginReq(loginInfo.password,loginInfo.name);
+    } else {
+      loginData = new LoginReq(loginInfo.password, undefined, loginInfo.name)
+    }
     request({
-    url: `${endpoint.LOGIN_URL}`,
-    method: "POST",
-    data: new LoginReq(loginInfo.password,loginInfo.name),
-  }).then(response => {
-    // 处理响应
-    alert(response)
-    console.log(response)
-    router.push("/menu");
-  })
-  .catch(error => {
-    // 处理错误
-    alert("连接异常")
-  });
+            url: `${endpoint.LOGIN_URL}`,
+            method: "POST",
+            data: loginData,
+          }).then(response => {
+            // 处理响应
+            alert(response)
+            console.log(response)
+            router.push("/menu");
+          })
+    
   }else {
     alert("请正确填写信息")
-   
-   
   }
   
 }
-//注册
+//注册：先校验输入再发送请求
 function register() {
-
+  if (!register_isError_name.value && !register_isError_email.value && !register_isError_phone.value && !register_isError_psw.value && !register_isError_pswCom.value && registerInfo.name!= '' && registerInfo.password!='' && registerInfo.confirmPassword!='' && (registerInfo.email!='' || registerInfo.phone!='')){
+    let registerData = new RegisterReq(registerInfo.password,registerInfo.name,registerInfo.email==''?undefined:registerInfo.email,registerInfo.phone==''?undefined:registerInfo.phone);
+    request({
+      url:`${endpoint.REGISTER_URL}`,
+      method:"POST",
+      data:registerData
+    }).then(response =>{
+      // 处理响应
+      alert(response)
+      console.log(response)
+    })
+  }else {
+    alert("请填写完整")
+  }
 }
 </script>
 
@@ -144,7 +181,7 @@ opacity: 1;
 transform: translateX(0);
 }
 .error {
-  color: #b93e3e;
+  color: #913a8e;
   font-size: 5px;
   margin: 3px;
   height: 16px;
@@ -204,6 +241,7 @@ transform: translateX(0);
    font-weight: 600;
    font-family: Montserrat;
    color: rgb(42, 26, 42);
+   margin-bottom: 15px;
   }
   .lable {
    font-size: 18px;
@@ -211,6 +249,7 @@ transform: translateX(0);
    color: rgb(42, 26, 42);
    font-weight: 400;
    margin: 0px;
+
   }
   .input-item {
    margin: 0px;
@@ -311,6 +350,7 @@ transform: translateX(0);
    font-weight: 600;
    font-family: Montserrat;
    color: rgb(42, 26, 42);
+   margin-bottom: 15px;
   }
   .lable {
    font-size: 14px;
@@ -335,6 +375,7 @@ transform: translateX(0);
    width: 60px;
    padding: 6px;
    border-radius: 7px;
+   font-size: 13px;
    display: flex;
    color: #fafbfc;
    align-items: center;

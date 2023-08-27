@@ -11,9 +11,10 @@ const SEND_EMAIL_TO_HOST = CONTACT_ROUTE + "/sendemail"
 
 //登录注册相关路由
 const LOGIN_URL = ROOT_PATH + '/sys-user/login'
-
+const REGISTER_URL = ROOT_PATH + '/sys-user'
 export default {
     CONTACT_ROUTE,
     SEND_EMAIL_TO_HOST,
-    LOGIN_URL
+    LOGIN_URL,
+    REGISTER_URL
 }
