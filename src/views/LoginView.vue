@@ -42,7 +42,7 @@
               </div>
               <div>
                 <div class="btn-register" @click="animateLoginContainer">已有账号？去登录</div>
-                <div class="btn-enter" @click="register">注册<img src="@/assets/icon\home/登录.png" class="login-icon"></div>
+                <div class="btn-enter" @click="register">注册并登入<img src="@/assets/icon\home/登录.png" class="login-icon"></div>
               </div>
             </div>
         </transition>
@@ -148,6 +148,7 @@ function register() {
       // 处理响应
       alert(response)
       console.log(response)
+      router.push("/menu");
     })
   }else {
     alert("请填写完整")
