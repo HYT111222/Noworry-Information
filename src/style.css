@@ -28,3 +28,6 @@ body,
     align-items: center;/*垂直*/
     justify-content: center;
 }
+.hover-scale:hover {
+    transform: scale(1.06);
+}

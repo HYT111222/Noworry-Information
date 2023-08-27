@@ -2,10 +2,10 @@
 <div class="home">
     <div class="container self-center inner-center ">
         <div class="menu-container self-center">
-            <div class="card card-container inner-center"><img src="@/assets/icon\home/商品.png" class="menu-img"><div class="menu-text">商品管理</div></div>
-            <div class="card card-container inner-center"><img src="@/assets/icon\home/订单.png" class="menu-img"><div class="menu-text">订单管理</div></div>
-            <div class="card card-container inner-center"><img src="@/assets/icon\home/爬虫.png" class="menu-img"><div class="menu-text">爬虫列表</div></div>
-            <div class="card card-container inner-center"><img src="@/assets/icon\home/设置.png" class="menu-img"><div class="menu-text">账号设置</div></div>
+            <div class="card card-container inner-center hover-scale" @click=""><img src="@/assets/icon\home/商品.png" class="menu-img"><div class="menu-text">商品管理</div></div>
+            <div class="card card-container inner-center hover-scale" @click=""><img src="@/assets/icon\home/订单.png" class="menu-img"><div class="menu-text">订单管理</div></div>
+            <div class="card card-container inner-center hover-scale" @click=""><img src="@/assets/icon\home/爬虫.png" class="menu-img"><div class="menu-text">爬虫列表</div></div>
+            <div class="card card-container inner-center hover-scale" @click=""><img src="@/assets/icon\home/设置.png" class="menu-img"><div class="menu-text">账号设置</div></div>
         </div>
     </div>
 </div>
@@ -16,6 +16,7 @@
 </script>
 
 <style>
+
 @media screen and (min-width: 650px) {
     .home {
     height: 100%;

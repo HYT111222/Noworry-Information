@@ -180,6 +180,7 @@ transition: opacity 0.7s, transform 0.7s;
 opacity: 1;
 transform: translateX(0);
 }
+/**输入校验提示 */
 .error {
   color: #913a8e;
   font-size: 5px;
