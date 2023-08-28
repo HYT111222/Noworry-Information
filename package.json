@@ -12,30 +12,32 @@
 		"vite-build": "vite build"
 	},
 	"dependencies": {
+		"@types/axios": "^0.14.0",
 		"amfe-flexible": "^2.2.1",
 		"axios": "^0.27.2",
 		"core-js": "^3.8.3",
 		"vue": "^3.2.13",
-		"vue-i18n": "^9.2.0",
+		"vue-i18n": "^9.3.0-beta.25",
 		"vue-router": "^4.1.5"
 	},
 	"devDependencies": {
+		"@types/node": "^20.4.9",
 		"@typescript-eslint/eslint-plugin": "^5.4.0",
 		"@typescript-eslint/parser": "^5.4.0",
+		"@vitejs/plugin-legacy": "^1.8.2",
+		"@vitejs/plugin-vue": "latest",
 		"@vue/cli-plugin-babel": "~5.0.0",
 		"@vue/cli-plugin-eslint": "~5.0.0",
 		"@vue/cli-plugin-typescript": "~5.0.0",
 		"@vue/cli-service": "~5.0.0",
+		"@vue/compiler-sfc": "^3.1.5",
 		"@vue/eslint-config-typescript": "^9.1.0",
 		"eslint": "^7.32.0",
 		"eslint-plugin-vue": "^8.0.3",
 		"sass-loader": "^13.0.2",
 		"typescript": "~4.5.5",
 		"vfonts": "0.0.3",
-		"vite": "4",
-		"@vitejs/plugin-legacy": "^1.8.2",
-		"@vitejs/plugin-vue": "latest",
-		"@vue/compiler-sfc": "^3.1.5"
+		"vite": "4"
 	},
 	"eslintConfig": {
 		"root": true,

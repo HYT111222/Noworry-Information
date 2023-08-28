@@ -39,7 +39,7 @@ import { onMounted, ref } from 'vue';
 const subtitle = ref("关")
 onMounted(() => {
   const arr = "于签证解决方案的最佳选择".split("");
-  arr.forEach((w, i) => {
+  arr.forEach((w, i) => { //产生一个动画效果
     setTimeout(() => subtitle.value = subtitle.value + w, i * 85)
   })
 })
@@ -60,7 +60,7 @@ onMounted(() => {
   }
 
   .home .banner-1 {
-    /* background: url("@/assets/icon/home/bc_price_moving.svg"); */
+    /* background: url("@/assets/icon/home/团队-15.png"); */
     background-repeat: no-repeat;
     background-position: 50% -30px;
     background-size: 200% 800px;
